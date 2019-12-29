@@ -22,7 +22,8 @@ config :votr_web, VotrWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "JVZA2vHdGYEt3IF+pyGEHMp3NdKnokiWOLvFbG865nzsI37wDY4VrMKGFF69Yn0t",
   render_errors: [view: VotrWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: VotrWeb.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: VotrWeb.PubSub, adapter: Phoenix.PubSub.PG2],
+  live_view: [signing_salt: System.get_env("LIVE_VIEW_SALT")]
 
 # Configures Elixir's Logger
 config :logger, :console,

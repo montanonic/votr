@@ -26,4 +26,7 @@ import "classlist-polyfill"
 //
 // Local files can be imported directly using relative paths, for example:
 // import socket from "./socket"
-// import LiveSocket from "phoenix_live_view"
+import LiveSocket from "phoenix_live_view"
+
+const liveSocket = new LiveSocket("/live", Socket)
+liveSocket.connect()

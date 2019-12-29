@@ -21,6 +21,7 @@ defmodule VotrWeb do
     quote do
       use Phoenix.Controller, namespace: VotrWeb
       import Plug.Conn
+      import Phoenix.LiveView.Controller
       import VotrWeb.Gettext
       alias VotrWeb.Router.Helpers, as: Routes
     end
@@ -38,6 +39,17 @@ defmodule VotrWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
+      import Phoenix.LiveView,
+        only: [
+          live_render: 2,
+          live_render: 3,
+          live_link: 1,
+          live_link: 2,
+          live_component: 2,
+          live_component: 3,
+          live_component: 4
+        ]
+
       import VotrWeb.ErrorHelpers
       import VotrWeb.Gettext
       alias VotrWeb.Router.Helpers, as: Routes
@@ -49,6 +61,7 @@ defmodule VotrWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+      import Phoenix.LiveView.Router
     end
   end
 
