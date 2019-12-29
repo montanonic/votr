@@ -9,7 +9,9 @@ defmodule VotrWeb.Application do
     # List all child processes to be supervised
     children = [
       # Start the endpoint when the application starts
-      VotrWeb.Endpoint
+      VotrWeb.Endpoint,
+      # Start the Presence server
+      VotrWeb.Presence
       # Starts a worker by calling: VotrWeb.Worker.start_link(arg)
       # {VotrWeb.Worker, arg},
     ]
