@@ -19,5 +19,8 @@ erl_crash.dump
 # Also ignore archive artifacts (built via "mix archive.build").
 *.ez
 
-# Ignore VSCode related artifacts
+# Ignore VSCode related artifacts.
 .elixir_ls
+
+# Ignore environmental file containing application secrets.
+.env
