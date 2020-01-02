@@ -17,7 +17,10 @@ defmodule VotrWeb.Router do
   scope "/", VotrWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    live "/", MainLive
+    live "/rooms", RoomLive.Index
+    live "/rooms/new", RoomLive.New
+    # live "/rooms/:id", RoomLive.Show
   end
 
   # Other scopes may use custom stacks.

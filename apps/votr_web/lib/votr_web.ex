@@ -72,6 +72,16 @@ defmodule VotrWeb do
     end
   end
 
+  def live_view do
+    quote do
+      use Phoenix.LiveView
+      # Use all HTML functionality (forms, tags, etc)
+      use Phoenix.HTML
+      import VotrWeb.ErrorHelpers
+      alias VotrWeb.Router.Helpers, as: Routes
+    end
+  end
+
   @doc """
   When used, dispatch to the appropriate controller/view/etc.
   """

@@ -60,7 +60,8 @@ config :votr_web, VotrWeb.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/votr_web/{live,views}/.*(ex)$",
+      # Views causes cortext errors; no need to re-render.
+      # ~r"lib/votr_web/views/.*(ex)$",
       ~r"lib/votr_web/templates/.*(eex)$"
     ]
   ]

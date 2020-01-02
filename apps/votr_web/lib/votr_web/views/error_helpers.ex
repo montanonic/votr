@@ -7,10 +7,16 @@ defmodule VotrWeb.ErrorHelpers do
 
   @doc """
   Generates tag for inlined form input errors.
+
+  This helper has been modified to support LiveView fields as well via the
+  phx_error_for data-attribute.
   """
   def error_tag(form, field) do
     Enum.map(Keyword.get_values(form.errors, field), fn error ->
-      content_tag(:span, translate_error(error), class: "help-block")
+      content_tag(:span, translate_error(error),
+        class: "help-block",
+        data: [phx_error_for: input_id(form, field)]
+      )
     end)
   end
 

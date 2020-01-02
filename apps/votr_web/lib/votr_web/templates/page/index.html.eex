@@ -8,6 +8,9 @@
     <h2>Resources</h2>
     <ul>
       <li>
+        <%= live_link "Vote!", to: Routes.live_path(@conn, VotrWeb.VoteLive)  %>
+      </li>
+      <li>
         <a href="https://hexdocs.pm/phoenix/overview.html">Guides &amp; Docs</a>
       </li>
       <li>

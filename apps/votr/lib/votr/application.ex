@@ -7,7 +7,8 @@ defmodule Votr.Application do
 
   def start(_type, _args) do
     children = [
-      Votr.Repo
+      Votr.Repo,
+      Votr.Store
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Votr.Supervisor)
