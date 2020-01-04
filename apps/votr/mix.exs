@@ -39,6 +39,8 @@ defmodule Votr.MixProject do
       {:ecto_sql, "~> 3.1"},
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.0"},
+      {:ets, "~> 0.8.0"},
+      {:ex2ms, "~> 1.6.0"},
       {:cortex, "~> 0.1", only: [:dev, :test]}
     ]
   end

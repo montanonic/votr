@@ -35,7 +35,7 @@ defmodule Votr.Store do
   end
 
   # def update(key, func) do
-  #   :ets.update_element(__MODULE__, key, arg3)
+  #   :ets.update_element(__MODULE__, key, {2, })
   # end
 
   #

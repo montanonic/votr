@@ -18,12 +18,14 @@ defmodule Votr.Voting do
     end
   end
 
-  # @doc """
-  # Joins a room as a user.
-  # """
-  # def join_room(%Room{} = room, user_attrs), do: add_user(room.id, attrs)
+  @doc """
+  Joins a room as a user, returning :ok.
+  """
+  def join_room(%Room{} = room, user_attrs), do: join_room(room.id, user_attrs)
 
-  # def join_room(room_id, user_attrs) do
-  #   Votr.
-  # end
+  def join_room(room_id, user_attrs) do
+    user_attrs
+    |> User.new()
+    |> Votr.Store.put(room_id)
+  end
 end
