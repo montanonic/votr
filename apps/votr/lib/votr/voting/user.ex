@@ -1,26 +1,34 @@
 defmodule Votr.Voting.User do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Votr.Voting.User
 
-  @primary_key {:id, :binary_id, autogenerate: false}
-
-  embedded_schema do
+  schema "voting_users" do
     field :name, :string
+
+    belongs_to :room, Votr.Voting.Room
+
+    timestamps()
   end
 
   @doc false
-  def changeset(%User{} = user, attrs) do
+  def changeset(user, attrs) do
+    IO.inspect attrs, structs: false, label: "USER CHANGESET ATTRS"
     user
-    |> cast(attrs, [:name])
+    |> cast(attrs, [:name, :room_id])
+    |> assoc_constraint(:room)
     |> validate_required([:name])
     |> validate_length(:name, min: 2)
-    |> put_change(:id, Ecto.UUID.generate())
+    |> validate_at_least_n_letters(:name, 2)
   end
 
-  def new(attrs) do
-    %User{}
-    |> changeset(attrs)
-    |> apply_action(:insert)
+  defp validate_at_least_n_letters(changeset, field, n) when n > 0 do
+    str = get_field(changeset, field) || ""
+    valid? = String.replace(str, ~r/[^a-z]/i, "") |> String.length() >= 2
+
+    if valid? do
+      changeset
+    else
+      add_error(changeset, field, "should have at least #{n} letter(s)")
+    end
   end
 end

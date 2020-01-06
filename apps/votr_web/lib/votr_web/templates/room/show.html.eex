@@ -1,0 +1,24 @@
+<h1>Show Room</h1>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @room.name %>
+  </li>
+
+  <li>
+    <strong>Users:</strong>
+    <ul>
+      <%= for user <- @room.users do %>
+        <%= render VotrWeb.UserView, "user.html", user: user %>
+      <% end %>
+    </ul>
+  </li>
+
+
+</ul>
+
+<span><%= link "Join", to: Routes.room_path(@conn, :new_user, @room) %></span>
+<span><%= link "Edit", to: Routes.room_path(@conn, :edit, @room) %></span>
+<span><%= link "Back", to: Routes.room_path(@conn, :index) %></span>
