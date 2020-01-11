@@ -35,7 +35,19 @@ defmodule Votr.Voting do
       ** (Ecto.NoResultsError)
 
   """
-  def get_room!(id, opts \\ []), do: Repo.get!(Room, id) |> Repo.preload(opts[:preload] || [])
+  def get_room!(id, opts \\ []) do
+    Repo.get!(Room, id) |> Repo.preload(opts[:preload] || [])
+  end
+
+  @doc """
+  Gets a single room by its name.
+
+  Rooms have unique names; if you have the room name, you have access to it.
+  """
+  def get_room_by_name!(name, opts \\ []) do
+    Repo.get_by!(Room, name: name)
+    |> Repo.preload(opts[:preload] || [])
+  end
 
   @doc """
   Creates a room.
@@ -51,9 +63,9 @@ defmodule Votr.Voting do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_room(attrs \\ %{}) do
+  def create_room(params \\ %{}) do
     %Room{}
-    |> Room.changeset(attrs)
+    |> Room.creation_changeset(params)
     |> Repo.insert()
   end
 

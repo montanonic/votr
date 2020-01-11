@@ -2,6 +2,7 @@ defmodule VotrWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
+  channel "user", VotrWeb.UserChannel
   # channel "room:*", VotrWeb.RoomChannel
 
   # Socket params are passed from the client and can

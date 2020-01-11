@@ -44,5 +44,15 @@ defmodule VotrWeb.Endpoint do
     key: "_votr_web_key",
     signing_salt: "FajH3QrV"
 
+  # plug :check_shit
+
+  # def check_shit(conn, _opts \\ []) do
+  #   IO.puts "YOU GOT TRIGGERED"
+  #   conn = fetch_session(conn)
+  #   conn = put_session(conn, :foolish, "man")
+  #   IO.inspect get_session(conn), label: "GET SESSION"
+  #   conn
+  # end
+
   plug VotrWeb.Router
 end

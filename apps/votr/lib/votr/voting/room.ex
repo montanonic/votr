@@ -10,12 +10,21 @@ defmodule Votr.Voting.Room do
     timestamps()
   end
 
-  @doc false
-  def changeset(room, attrs) do
+  def changeset(room, params) do
     room
-    |> cast(attrs, [:name])
-    |> cast_assoc(:users, required: true)
+    |> cast(params, [:name])
     |> validate_required([:name])
-    |> validate_length(:users, min: 1)
+    |> validate_length(:name, min: 3)
+    |> unsafe_validate_unique([:name], Votr.Repo)
+    |> unique_constraint(:name)
+  end
+
+  @doc """
+  For creating a new room, which requires having one user.
+  """
+  def creation_changeset(room, params) do
+    changeset(room, params)
+    |> cast_assoc(:users, required: true)
+    |> validate_length(:users, is: 1)
   end
 end

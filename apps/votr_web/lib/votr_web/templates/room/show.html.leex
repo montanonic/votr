@@ -19,6 +19,5 @@
 
 </ul>
 
-<span><%= link "Join", to: Routes.room_path(@conn, :new_user, @room) %></span>
-<span><%= link "Edit", to: Routes.room_path(@conn, :edit, @room) %></span>
-<span><%= link "Back", to: Routes.room_path(@conn, :index) %></span>
+<span><%= link "Vote", to: "#" %></span>
+<span><%= live_link "Back", to: Routes.live_path(@socket, VotrWeb.RoomLive.Index) %></span>

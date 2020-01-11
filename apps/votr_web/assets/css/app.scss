@@ -3,3 +3,12 @@
 @import "layout";
 @import "./phoenix.css";
 @import "../../../../deps/phoenix_live_view/assets/css/live_view.css";
+
+ul.room-index {
+    width: 50rem;
+    li {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}

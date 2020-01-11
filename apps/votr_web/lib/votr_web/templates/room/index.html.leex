@@ -1,0 +1,12 @@
+<h1>Listing Rooms</h1>
+<ul class="room-index">
+  <%= for room <- @rooms do %>
+    <li>
+      <%= room.name %>
+      <%= live_link to: Routes.live_path(@socket, VotrWeb.RoomLive.Show, room.id) do %>
+        <button>Join Room</button>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+<div><%= link "Back", to: Routes.live_path(@socket, VotrWeb.MainLive) %></div>

@@ -12,7 +12,6 @@ defmodule Votr.Voting.User do
 
   @doc false
   def changeset(user, attrs) do
-    IO.inspect attrs, structs: false, label: "USER CHANGESET ATTRS"
     user
     |> cast(attrs, [:name, :room_id])
     |> assoc_constraint(:room)

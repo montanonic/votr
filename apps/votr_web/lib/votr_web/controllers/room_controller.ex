@@ -10,6 +10,15 @@ defmodule VotrWeb.RoomController do
     render(conn, "index.html", rooms: rooms)
   end
 
+  def login(conn, _params) do
+    live_render(conn, VotrWeb.RoomLive.New, router: VotrWeb.Router)
+  end
+
+
+  def logout(conn, _params) do
+    live_render(conn, VotrWeb.RoomLive.New, router: VotrWeb.Router)
+  end
+
   def new(conn, _params) do
     changeset = Voting.change_room(%Room{users: [%User{}]})
     render(conn, "new.html", changeset: changeset)
@@ -58,7 +67,6 @@ defmodule VotrWeb.RoomController do
 
   def edit(conn, %{"id" => id}) do
     room = Voting.get_room!(id)
-    require IEx; IEx.pry()
     changeset = Voting.change_room(room)  #|> Ecto.Changeset.put_change(:users, [])
     render(conn, "edit.html", room: room, changeset: changeset)
   end

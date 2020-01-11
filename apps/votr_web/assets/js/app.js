@@ -26,9 +26,12 @@ import "classlist-polyfill"
 //
 // Local files can be imported directly using relative paths, for example:
 // import socket from "./socket"
-import { Socket } from "phoenix"
 import LiveSocket from "phoenix_live_view"
+import { Socket } from "phoenix"
 
+import socket from "./socket"
+
+// Initialize LiveSocket on client.
 const liveSocket = new LiveSocket("/live", Socket, {
   logger: (kind, msg, data) => {
     console.log(`${kind}: ${msg}`, data)
@@ -36,3 +39,15 @@ const liveSocket = new LiveSocket("/live", Socket, {
 })
 window.liveSocket = liveSocket
 liveSocket.connect()
+
+// Initialize UserSocket on client.
+socket.connect()
+let channel = socket.channel("user", {})
+channel
+  .join()
+  .receive("ok", resp => {
+    console.log("Joined successfully:", resp)
+  })
+  .receive("error", resp => {
+    console.log("Unable to join:", resp)
+  })

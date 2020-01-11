@@ -14,16 +14,22 @@ defmodule VotrWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :live_view do
+
+  end
+
   scope "/", VotrWeb do
     pipe_through :browser
 
     live "/", MainLive
-    resources "/rooms", RoomController
-    get "/rooms/:id/user/new", RoomController, :new_user
-    post "/rooms/:id/user", RoomController, :create_user
-    resources "/users", UserController
-    # live "/rooms", RoomLive.Index
-    # live "/rooms/new", RoomLive.New
+    live "/rooms", RoomLive.Index
+    live "/rooms/new", RoomLive.New
+    live "/rooms/:id", RoomLive.Show
+
+    # resources "/rooms", RoomController
+    # get "/rooms/:id/user/new", RoomController, :new_user
+    # post "/rooms/:id/user", RoomController, :create_user
+    # resources "/users", UserController
     # live "/rooms/:id", RoomLive.Show
   end
 
