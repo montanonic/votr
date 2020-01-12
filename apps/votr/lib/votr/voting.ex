@@ -5,8 +5,7 @@ defmodule Votr.Voting do
 
   import Ecto.Query, warn: false
   alias Votr.Repo
-
-  alias Votr.Voting.Room
+  alias Votr.Voting.{VoteOption, Room}
 
   @doc """
   Returns the list of rooms.
@@ -22,28 +21,20 @@ defmodule Votr.Voting do
   end
 
   @doc """
-  Gets a single room.
-
-  Raises `Ecto.NoResultsError` if the Room does not exist.
-
-  ## Examples
-
-      iex> get_room!(123)
-      %Room{}
-
-      iex> get_room!(456)
-      ** (Ecto.NoResultsError)
-
+  Gets a single room by id. Raises `Ecto.NoResultsError` if no record was found.
   """
+  @spec get_room!(id :: integer, opts :: [preload: list] | nil) :: Room.t()
   def get_room!(id, opts \\ []) do
     Repo.get!(Room, id) |> Repo.preload(opts[:preload] || [])
   end
 
   @doc """
-  Gets a single room by its name.
+  Gets a single room by its name. Raises `Ecto.NoResultsError` if no record was
+  found.
 
   Rooms have unique names; if you have the room name, you have access to it.
   """
+  @spec get_room!(name :: String.t(), opts :: [preload: list] | nil) :: Room.t()
   def get_room_by_name!(name, opts \\ []) do
     Repo.get_by!(Room, name: name)
     |> Repo.preload(opts[:preload] || [])
@@ -53,34 +44,19 @@ defmodule Votr.Voting do
   Creates a room.
 
   Note that a room must always have at least 1 user to be valid.
-
-  ## Examples
-
-      iex> create_room(%{field: value})
-      {:ok, %Room{}}
-
-      iex> create_room(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
   """
-  def create_room(params \\ %{}) do
+  @spec create_room(attrs :: map | nil) :: {:ok, Room.t()} | {:error, Ecto.Changeset.t()}
+  def create_room(attrs \\ %{}) do
     %Room{}
-    |> Room.creation_changeset(params)
+    |> Room.creation_changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
   Updates a room.
-
-  ## Examples
-
-      iex> update_room(room, %{field: new_value})
-      {:ok, %Room{}}
-
-      iex> update_room(room, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
   """
+  @spec update_room(room :: Room.t(), attrs :: map) ::
+          {:ok, Room.t()} | {:error, Ecto.Changeset.t()}
   def update_room(%Room{} = room, attrs) do
     room
     |> Room.changeset(attrs)
@@ -88,127 +64,45 @@ defmodule Votr.Voting do
   end
 
   @doc """
-  Deletes a Room.
-
-  ## Examples
-
-      iex> delete_room(room)
-      {:ok, %Room{}}
-
-      iex> delete_room(room)
-      {:error, %Ecto.Changeset{}}
-
+  Deletes a room.
   """
+  @spec delete_room(room :: Room.t()) :: {:ok, Room.t()} | {:error, Ecto.Changeset.t()}
   def delete_room(%Room{} = room) do
     Repo.delete(room)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking room changes.
-
-  ## Examples
-
-      iex> change_room(room)
-      %Ecto.Changeset{source: %Room{}}
-
+  Add a vote option to a room.
   """
-  def change_room(%Room{} = room) do
-    Room.changeset(room, %{})
-  end
-
-  alias Votr.Voting.User
-
-  @doc """
-  Returns the list of users.
-
-  ## Examples
-
-      iex> list_users()
-      [%User{}, ...]
-
-  """
-  def list_users do
-    Repo.all(User)
-  end
-
-  @doc """
-  Gets a single user.
-
-  Raises `Ecto.NoResultsError` if the User does not exist.
-
-  ## Examples
-
-      iex> get_user!(123)
-      %User{}
-
-      iex> get_user!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_user!(id), do: Repo.get!(User, id)
-
-  @doc """
-  Creates a user for the given voting room.
-
-  ## Examples
-
-      iex> create_user(%{field: value})
-      {:ok, %User{}}
-
-      iex> create_user(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_user(attrs \\ %{}) do
-    %User{}
-    |> User.changeset(attrs)
+  @spec add_vote_option(room :: Room.t(), attrs :: map) ::
+          {:ok, Room.t()} | {:error, Ecto.Changeset.t()}
+  def add_vote_option(room, attrs) do
+    Ecto.build_assoc(room, :vote_options)
+    |> VoteOption.changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Updates a user.
-
-  ## Examples
-
-      iex> update_user(user, %{field: new_value})
-      {:ok, %User{}}
-
-      iex> update_user(user, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
+  Delete a vote option.
   """
-  def update_user(%User{} = user, attrs) do
-    user
-    |> User.changeset(attrs)
-    |> Repo.update()
+  @spec delete_vote_option!(VoteOption.t()) :: VoteOption.t() | no_return()
+  def delete_vote_option!(vote_option) do
+    Repo.delete!(vote_option)
   end
 
   @doc """
-  Deletes a User.
-
-  ## Examples
-
-      iex> delete_user(user)
-      {:ok, %User{}}
-
-      iex> delete_user(user)
-      {:error, %Ecto.Changeset{}}
-
+  Use this changeset to update an existing room.
   """
-  def delete_user(%User{} = user) do
-    Repo.delete(user)
-  end
+  defdelegate room_changeset(room, attrs), to: Room, as: :changeset
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking user changes.
-
-  ## Examples
-
-      iex> change_user(user)
-      %Ecto.Changeset{source: %User{}}
-
+  Use this changeset when creating a new room. A room requires users, and this
+  changeset ensures that a user for the room is created alongside of it.
   """
-  def change_user(%User{} = user) do
-    User.changeset(user, %{})
-  end
+  defdelegate room_creation_changeset(new_room, attrs), to: Room, as: :creation_changeset
+
+  @doc """
+  Use this to make changes to a VoteOption.
+  """
+  defdelegate vote_option_changeset(vote_option, attrs), to: VoteOption, as: :changeset
 end

@@ -25,6 +25,7 @@ defmodule VotrWeb.Router do
     live "/rooms", RoomLive.Index
     live "/rooms/new", RoomLive.New
     live "/rooms/:id", RoomLive.Show
+    live "/rooms/:id/vote", VoteLive
 
     # resources "/rooms", RoomController
     # get "/rooms/:id/user/new", RoomController, :new_user

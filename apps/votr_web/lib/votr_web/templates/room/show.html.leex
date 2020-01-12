@@ -19,5 +19,5 @@
 
 </ul>
 
-<span><%= link "Vote", to: "#" %></span>
+<span><%= link "Vote", to: Routes.live_path(@socket, VotrWeb.VoteLive, @room.id) %></span>
 <span><%= live_link "Back", to: Routes.live_path(@socket, VotrWeb.RoomLive.Index) %></span>

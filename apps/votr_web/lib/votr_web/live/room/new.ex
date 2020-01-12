@@ -2,7 +2,7 @@ defmodule VotrWeb.RoomLive.New do
   use VotrWeb, :live_view
 
   alias Votr.Voting
-  alias Votr.Voting.{Room, User}
+  alias Votr.Voting.Room
 
   @impl true
   def render(assigns) do
@@ -11,7 +11,7 @@ defmodule VotrWeb.RoomLive.New do
 
   @impl true
   def mount(_session, socket) do
-    changeset = Room.creation_changeset(%Room{}, %{})
+    changeset = Voting.room_creation_changeset(%Room{}, %{})
     {:ok, assign(socket, changeset: changeset)}
   end
 
@@ -20,7 +20,7 @@ defmodule VotrWeb.RoomLive.New do
     IO.inspect socket, structs: false
     changeset =
       %Room{}
-      |> Room.creation_changeset(room_params)
+      |> Voting.room_creation_changeset(room_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, changeset: changeset)}
@@ -30,9 +30,6 @@ defmodule VotrWeb.RoomLive.New do
     socket =
       case Voting.create_room(room_params) do
         {:ok, room} ->
-          # Make user feel like something is happening.
-          Process.sleep(700)
-          IO.inspect(room, label: "NEW ROOM")
           # VotrWeb.Presence.track(self(), "vote", user.id, %{name: user.name})
           live_redirect(socket, to: Routes.live_path(socket, VotrWeb.RoomLive.Show, room.id))
 

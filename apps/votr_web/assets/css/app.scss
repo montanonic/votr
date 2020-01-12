@@ -4,11 +4,102 @@
 @import "./phoenix.css";
 @import "../../../../deps/phoenix_live_view/assets/css/live_view.css";
 
+.layout {
+  margin-top: 2rem;
+}
+
 ul.room-index {
-    width: 50rem;
-    li {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
+
+  li {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    overflow-wrap: break-word;
+  }
+}
+
+.vote-live-view {
+  .header {
+    text-align: center;
+  }
+}
+
+.vote-live-view .vote-options-component {
+  .start-vote-button {
+    &:disabled {
+      background-color: red;
+
+      &:hover {
+        background-color: red;
+      }
     }
+
+    margin-top: 1rem;
+    margin-bottom: 4rem;
+    width: 100%;
+    border: none;
+    font-size: 1.8rem;
+    background-color: lighten(green, 14%);
+
+    &:hover {
+      background-color: lighten(green, 8%);
+    }
+
+    // Styles for the clarification text.
+    .clarification {
+      text-transform: none;
+      font-size: 1.5rem;
+      vertical-align: top;
+    }
+  }
+
+  .add-option-container {
+    display: flex;
+    // We have to use flex-end so that the error message doesn't mess up button
+    // alignment.
+    align-items: flex-end;
+
+    button {
+      margin-right: 1rem;
+    }
+
+    .input-field-container {
+      // Because we're using flex-end alignment in this container, the input
+      // isn't correctly aligned with the button. This adjustment fixes that.
+      margin-bottom: -5px;
+      width: 100%;
+      .help-block {
+        margin: 0;
+      }
+    }
+  }
+
+  .vote-options-list li {
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #dfdfdf;
+    display: grid;
+    align-items: center;
+    grid-template-columns: 3fr 1fr;
+    grid-gap: 1rem;
+
+    button {
+      min-width: 11rem;
+      margin-bottom: 0;
+    }
+
+    .actions {
+      display: grid;
+      grid-gap: 1rem;
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .option {
+      margin: 0;
+      font-size: 1.7rem;
+    }
+  }
 }

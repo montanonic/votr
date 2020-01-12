@@ -75,10 +75,25 @@ defmodule VotrWeb do
   def live_view do
     quote do
       use Phoenix.LiveView
+      unquote(live())
+    end
+  end
+
+  def live_component do
+    quote do
+      use Phoenix.LiveComponent
+      unquote(live())
+    end
+  end
+
+  # Common imports for both live_view and live_component.
+  defp live do
+    quote do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
       import VotrWeb.ErrorHelpers
       alias VotrWeb.Router.Helpers, as: Routes
+      alias Phoenix.PubSub
     end
   end
 

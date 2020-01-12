@@ -1,0 +1,37 @@
+<%= f = form_for @changeset, "#", [phx_change: :validate, phx_submit: :save,
+class: "vote-options-component"] %>
+
+<button
+  type="button"
+  phx-click="start_vote"
+  class="start-vote-button"
+  <%= num_vote_options(@room) < 2 && "disabled" || "" %>
+>
+  Start Vote
+  <%= if num_vote_options(@room) < 2 do %>
+    <span class="clarification">
+      (need at least 2 options)
+    </span>
+  <% end %>
+</button>
+
+<div class="add-option-container">
+  <%= submit "Add Option", phx_disable_with: "Adding..." %>
+  <div class="input-field-container">
+    <%= error_tag f, :name %>
+    <%= text_input f, :name, phx_debounce: "blur" %>
+  </div>
+</div>
+
+<ul class="vote-options-list">
+  <%= for vote_option <- @room.vote_options do %>
+    <li>
+      <p class="option"><%= vote_option.name %></p>
+      <div class="actions">
+        <button phx-click="edit_option" type="button" phx-value-name="<%= vote_option.name %>" class="button-clear">Edit</button>
+        <button phx-click="delete_option" type="button" phx-value-name="<%= vote_option.name %>" class="button-clear">Delete</button>
+      </div>
+    </li>
+  <% end %>
+</ul>
+</form>
