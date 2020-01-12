@@ -26,7 +26,7 @@ defmodule VotrWeb.VoteLive.VoteOptions do
   end
 
   def handle_event("save", %{"vote_option" => vote_option_params}, socket) do
-    case Voting.add_vote_option(socket.assigns.room, vote_option_params) do
+    result = case Voting.add_vote_option(socket.assigns.room, vote_option_params) do
       {:ok, vote_option} ->
         VoteLive.broadcast!(socket, {:added_vote_option, vote_option})
         {:noreply, assign(socket, changeset: initial_changeset())}
@@ -34,6 +34,8 @@ defmodule VotrWeb.VoteLive.VoteOptions do
       {:error, changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
     end
+    Process.sleep(500)
+    result
   end
 
   def handle_event("edit_option", %{"name" => option_name}, socket) do

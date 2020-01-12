@@ -11,6 +11,7 @@ defmodule Votr.Voting.VoteOption do
     timestamps()
   end
 
+  # TODO: trim whitespace
   @doc false
   def changeset(%__MODULE__{} = vote_option, attrs) do
     vote_option

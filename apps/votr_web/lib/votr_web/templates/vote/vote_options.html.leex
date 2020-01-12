@@ -19,7 +19,7 @@ class: "vote-options-component"] %>
   <%= submit "Add Option", phx_disable_with: "Adding..." %>
   <div class="input-field-container">
     <%= error_tag f, :name %>
-    <%= text_input f, :name, phx_debounce: "blur" %>
+    <%= text_input f, :name, phx_debounce: 1000 %>
   </div>
 </div>
 
