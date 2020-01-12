@@ -17,6 +17,7 @@ defmodule Votr.Voting.VoteOption do
     vote_option
     |> cast(attrs, [:name, :description])
     |> validate_required([:name])
+    |> update_change(:name, &String.trim/1)
     |> assoc_constraint(:room)
     |> unsafe_validate_unique([:name, :room_id], Votr.Repo)
     |> unique_constraint(:name, name: :vote_options_room_id_name_index)

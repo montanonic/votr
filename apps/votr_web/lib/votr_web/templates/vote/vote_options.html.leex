@@ -1,6 +1,4 @@
-<%= f = form_for @changeset, "#", [phx_change: :validate, phx_submit: :save,
-class: "vote-options-component"] %>
-
+<%= f = form_for @changeset, "#", [phx_change: :validate, phx_submit: :save, class: "vote-options-component"] %>
 <button
   type="button"
   phx-click="start_vote"
@@ -14,22 +12,31 @@ class: "vote-options-component"] %>
     </span>
   <% end %>
 </button>
-
 <div class="add-option-container">
   <%= submit "Add Option", phx_disable_with: "Adding..." %>
   <div class="input-field-container">
     <%= error_tag f, :name %>
-    <%= text_input f, :name, phx_debounce: 1000 %>
+    <%= text_input f, :name, phx_debounce: 1000, autocomplete: "off" %>
   </div>
 </div>
-
 <ul class="vote-options-list">
-  <%= for vote_option <- @room.vote_options do %>
+  <%= for vote_option <- sorted_vote_options(@room) do %>
     <li>
-      <p class="option"><%= vote_option.name %></p>
+      <%= if vote_option.id == @editing_option_id do %>
+        <div class="input-field-container">
+          <%= error_tag f, :name %>
+          <%= text_input f, :name, phx_debounce: 1000, autocomplete: "off", value: vote_option.name %>
+        </div>
+      <% else %>
+        <p class="option"><%= vote_option.name %></p>
+      <% end %>
       <div class="actions">
-        <button phx-click="edit_option" type="button" phx-value-name="<%= vote_option.name %>" class="button-clear">Edit</button>
-        <button phx-click="delete_option" type="button" phx-value-name="<%= vote_option.name %>" class="button-clear">Delete</button>
+        <%= if vote_option.id == @editing_option_id do %>
+          <button type="button">Save</button>
+        <% else %>
+          <button phx-click="edit_option" type="button" phx-value-id="<%=vote_option.id %>" class="button-clear">Edit</button>
+        <% end %>
+        <button phx-click="delete_option" type="button" phx-value-id="<%= vote_option.id %>" class="button-clear">Delete</button>
       </div>
     </li>
   <% end %>

@@ -9,7 +9,7 @@ defmodule VotrWeb.VoteLive.VoteOptions do
   end
 
   def mount(socket) do
-    {:ok, assign(socket, changeset: initial_changeset(), editing_option: nil)}
+    {:ok, assign(socket, changeset: initial_changeset(), editing_option_id: nil)}
   end
 
   def update(%{room: room}, socket) do
@@ -38,12 +38,14 @@ defmodule VotrWeb.VoteLive.VoteOptions do
     result
   end
 
-  def handle_event("edit_option", %{"name" => option_name}, socket) do
-    {:noreply, assign(socket, editing_option: option_name)}
+  def handle_event("edit_option", %{"id" => id}, socket) do
+    id = String.to_integer(id)
+    {:noreply, assign(socket, editing_option_id: id)}
   end
 
-  def handle_event("delete_option", %{"name" => option_name}, socket) do
-    vote_option = socket.assigns.room.vote_options |> Enum.find(&(&1.name == option_name))
+  def handle_event("delete_option", %{"id" => id}, socket) do
+    id = String.to_integer(id)
+    vote_option = socket.assigns.room.vote_options |> Enum.find(&(&1.id == id))
     Voting.delete_vote_option!(vote_option)
     IO.puts("DELETED")
     VoteLive.broadcast!(socket, {:removed_vote_option, vote_option})
