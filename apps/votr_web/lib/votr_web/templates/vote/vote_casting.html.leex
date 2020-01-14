@@ -1,0 +1,5 @@
+<button phx-click="cancel_voting">Cancel Voting</button>
+<div>
+  <%= live_link "Change Id", to: Routes.live_path(@socket,
+  VotrWeb.VoteLive, @room.id == 1 && 2 || 1) %>
+</div>

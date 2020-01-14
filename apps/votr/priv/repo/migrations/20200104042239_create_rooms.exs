@@ -4,6 +4,7 @@ defmodule Votr.Repo.Migrations.CreateRooms do
   def change do
     create table(:rooms) do
       add :name, :string
+      add :status, :string
 
       timestamps()
     end

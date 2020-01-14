@@ -12,10 +12,6 @@ defmodule VotrWeb.VoteLive.VoteOptions do
     {:ok, assign(socket, changeset: initial_changeset(), editing_option_id: nil)}
   end
 
-  def update(%{room: room}, socket) do
-    {:ok, assign(socket, room: room)}
-  end
-
   def handle_event("validate", %{"vote_option" => vote_option_params}, socket) do
     changeset =
       %VoteOption{}
@@ -27,8 +23,7 @@ defmodule VotrWeb.VoteLive.VoteOptions do
 
   def handle_event("save", %{"vote_option" => vote_option_params}, socket) do
     result = case Voting.add_vote_option(socket.assigns.room, vote_option_params) do
-      {:ok, vote_option} ->
-        VoteLive.broadcast!(socket, {:added_vote_option, vote_option})
+      {:ok, _vote_option} ->
         {:noreply, assign(socket, changeset: initial_changeset())}
 
       {:error, changeset} ->
@@ -47,8 +42,11 @@ defmodule VotrWeb.VoteLive.VoteOptions do
     id = String.to_integer(id)
     vote_option = socket.assigns.room.vote_options |> Enum.find(&(&1.id == id))
     Voting.delete_vote_option!(vote_option)
-    IO.puts("DELETED")
-    VoteLive.broadcast!(socket, {:removed_vote_option, vote_option})
+    {:noreply, socket}
+  end
+
+  def handle_event("start_vote", _params, socket) do
+    Voting.set_room_status(socket.assigns.room, "voting")
     {:noreply, socket}
   end
 

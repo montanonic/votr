@@ -89,9 +89,6 @@ defmodule VotrWeb do
   # Common imports for both live_view and live_component.
   defp live do
     quote do
-      # Use all HTML functionality (forms, tags, etc)
-      use Phoenix.HTML
-      import VotrWeb.ErrorHelpers
       alias VotrWeb.Router.Helpers, as: Routes
       alias Phoenix.PubSub
     end

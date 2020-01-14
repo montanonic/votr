@@ -30,9 +30,11 @@ import LiveSocket from "phoenix_live_view"
 import { Socket } from "phoenix"
 
 import socket from "./socket"
+import { Hooks } from "./hooks"
 
 // Initialize LiveSocket on client.
 const liveSocket = new LiveSocket("/live", Socket, {
+  hooks: Hooks,
   logger: (kind, msg, data) => {
     console.log(`${kind}: ${msg}`, data)
   }

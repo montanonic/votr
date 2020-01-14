@@ -1,7 +1,7 @@
 defmodule VotrWeb.VoteView do
   use VotrWeb, :view
   alias VotrWeb.VoteLive
-  alias Votr.Voting.{VoteOption}
+  alias Votr.Voting.{VoteOption, Room}
 
   def num_vote_options(room) do
     room.vote_options |> Enum.count()

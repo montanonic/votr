@@ -1,6 +1,7 @@
 defmodule VotrWeb.VoteLive do
   use VotrWeb, :live_view
   alias Votr.Voting
+  alias Votr.Voting.{VoteOption, Room}
 
   @doc false
   @impl true
@@ -19,12 +20,12 @@ defmodule VotrWeb.VoteLive do
   def handle_params(%{"id" => id}, _uri, socket) do
     room = Voting.get_room!(id, preload: [:users, :vote_options])
     socket = assign(socket, room: room)
-    topic = vote_topic(socket)
 
     if connected?(socket) do
-      # In case of param change, we don't want to subscribe to multiple rooms at once.
-      :ok = PubSub.unsubscribe(VotrWeb.PubSub, topic)
-      :ok = PubSub.subscribe(VotrWeb.PubSub, topic)
+      room_id = socket.assigns.room.id
+      # In case of param change, we only want to be subscribed to a single room.
+      :ok = Voting.unsubscribe(room_id)
+      :ok = Voting.subscribe(room_id)
     end
 
     {:noreply, socket}
@@ -32,24 +33,22 @@ defmodule VotrWeb.VoteLive do
 
   @doc false
   @impl true
-  def handle_info({:added_vote_option, vote_option}, socket) do
+  def handle_info({Voting, {VoteOption, :added}, vote_option}, socket) do
     room = Map.update!(socket.assigns.room, :vote_options, &[vote_option | &1])
     {:noreply, assign(socket, room: room)}
   end
 
-  def handle_info({:removed_vote_option, vote_option}, socket) do
+  def handle_info({Voting, {VoteOption, :deleted}, vote_option}, socket) do
     room = Map.update!(socket.assigns.room, :vote_options, &List.delete(&1, vote_option))
     {:noreply, assign(socket, room: room)}
   end
 
-  @doc """
-  Broadcast a message to everyone rendering the VotrLive view.
-  """
-  def broadcast!(socket, msg) do
-    PubSub.broadcast!(VotrWeb.PubSub, vote_topic(socket), msg)
+  def handle_info({Voting, {Room, :status_changed}, room}, socket) do
+    {:noreply, assign(socket, room: room)}
   end
 
-  # Returns the topic for the current room's voting session. Expects that the
-  # `room` is assigned to the `socket`.
-  defp vote_topic(%{assigns: %{room: %{id: id}}}), do: "voting_room:#{id}"
+  def handle_info({Voting, event, _result}, socket) do
+    IO.inspect event, label: "Unhandled Voting Event"
+    {:noreply, socket}
+  end
 end
