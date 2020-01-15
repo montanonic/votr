@@ -18,7 +18,7 @@ defmodule VotrWeb.VoteLive do
   @doc false
   @impl true
   def handle_params(%{"id" => id}, _uri, socket) do
-    room = Voting.get_room!(id, preload: [:users, :vote_options])
+    room = Voting.get_room!(id, preload: [:vote_options])
     socket = assign(socket, room: room)
 
     if connected?(socket) do

@@ -157,13 +157,14 @@ defmodule Votr.Voting do
   #
 
   # When data is changed, this function broadcasts that changed data to all
-  # subscribers. This took a surprisingly long time to generalize so that it'd
-  # work with (1) changesets and non-changesets, (2) Room structs and structs
-  # with room_id's, (3) structs that have no reference to the current room
-  # (requiring that you manually pass the room_id to the function). The
-  # end-result is that this function preserves the given data, returning it
-  # as-is, while also broadcasting an event for the room using any inference
-  # from the given data with any successful changeset.
+  # subscribers. It passes that data through unchanged, so it can just be added
+  # to the end of any pipeline that returns data.
+  #
+  # This function is is generalized so that it will work with result tuples,
+  # {:ok, _} and {:error, _}, along with direct values. It also will extract the
+  # room_id from Room structs or structs with room_id's. But, for structs that
+  # have no reference to the current room, you must manually pass the room_id
+  # that you wish to broadcast to as the second argument of this function.
   defp broadcast_change!(result, event) do
     # This two-clause version of the function tries to extract the room's id
     # from the given result, passing it to the more general broadcast_change!/3
@@ -176,7 +177,6 @@ defmodule Votr.Voting do
         {:ok, %{room_id: id}} -> id
         %Room{id: id} -> id
         %{room_id: id} -> id
-        {:error, _} -> nil
       end
 
     broadcast_change!(result, room_id, event)
@@ -185,11 +185,13 @@ defmodule Votr.Voting do
   defp broadcast_change!({:ok, result}, room_id, event),
     do: broadcast_change!(result, room_id, event, :ok)
 
-  defp broadcast_change!({:error, result}, _, _), do: result
+  defp broadcast_change!({:error, _} = result, _, _), do: result
 
   defp broadcast_change!(%{} = result, room_id, event),
     do: broadcast_change!(result, room_id, event, nil)
 
+  # The `wrapper` indicates if the result should be wrapped in a tuple, and
+  # which value to use.
   defp broadcast_change!(result, room_id, event, wrapper) do
     broadcast_to_room!(result, room_id, event)
 

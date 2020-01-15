@@ -1,5 +1,17 @@
 <button phx-click="cancel_voting">Cancel Voting</button>
-<div>
-  <%= live_link "Change Id", to: Routes.live_path(@socket,
-  VotrWeb.VoteLive, @room.id == 1 && 2 || 1) %>
-</div>
+<ul>
+  <%= for vote_option <- sort_votes_by_rank(@room.vote_options) do %>
+    <li style="display: flex;">
+      <div>
+        <%= vote_option.name %>
+      </div>
+      <button phx-click="up" phx-value-id="<%=vote_option.id %>"
+        class="button-outline" style="font-size: 2rem;">▲</button>
+      <button phx-click="down" phx-value-id="<%=vote_option.id %>"
+        class="button-outline" style="font-size: 2rem;">▼</button>
+      <div>
+        <%= vote_option.rank %>
+      </div>
+    </li>
+  <% end %>
+</ul>

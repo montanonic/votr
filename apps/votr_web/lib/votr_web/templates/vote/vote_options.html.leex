@@ -1,13 +1,4 @@
 <%= f = form_for @changeset, "#", [phx_change: :validate, phx_submit: :save, class: "vote-options-component"] %>
-<div>
-  <%= live_link "Change Id", to: Routes.live_path(@socket,
-  VotrWeb.VoteLive, @room.id == 1 && 2 || 1) %>
-</div>
-<div>
-  <%= live_link "Change Id", to: Routes.live_path(@socket,
-  VotrWeb.RoomLive.Show, @room.id == 1 && 2 || 1) %>
-</div>
-
 <button
   type="button"
   phx-click="start_vote"

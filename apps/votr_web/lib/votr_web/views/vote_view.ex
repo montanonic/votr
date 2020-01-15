@@ -1,7 +1,7 @@
 defmodule VotrWeb.VoteView do
   use VotrWeb, :view
   alias VotrWeb.VoteLive
-  alias Votr.Voting.{VoteOption, Room}
+  alias Votr.Voting.Room
 
   def num_vote_options(room) do
     room.vote_options |> Enum.count()
@@ -13,5 +13,12 @@ defmodule VotrWeb.VoteView do
   """
   def sorted_vote_options(room) do
     room.vote_options |> Enum.sort_by(& &1.inserted_at, &>=/2)
+  end
+
+  @doc """
+  Renders votes in the order given by the user.
+  """
+  def sort_votes_by_rank(vote_options) do
+    vote_options |> Enum.sort_by(& &1.rank, &<=/2)
   end
 end
