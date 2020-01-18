@@ -39,7 +39,13 @@ defmodule VotrWeb.VoteLive do
   end
 
   def handle_info({Voting, {VoteOption, :deleted}, vote_option}, socket) do
-    room = Map.update!(socket.assigns.room, :vote_options, &List.delete(&1, vote_option))
+    room =
+      Map.update!(
+        socket.assigns.room,
+        :vote_options,
+        &Enum.reject(&1, fn vo -> vo.id == vote_option.id end)
+      )
+
     {:noreply, assign(socket, room: room)}
   end
 
@@ -48,7 +54,7 @@ defmodule VotrWeb.VoteLive do
   end
 
   def handle_info({Voting, event, _result}, socket) do
-    IO.inspect event, label: "Unhandled Voting Event"
+    IO.inspect(event, label: "Unhandled Voting Event")
     {:noreply, socket}
   end
 end

@@ -1,4 +1,4 @@
-<div class="vote-live-view" id="vote-live-view" phx-hook="VoteLiveView">
+<div class="vote-live-view" id="vote-live-view">
   <%= cond do %>
     <% Room.get_status("voting_options") == @room.status -> %>
       <h1 class="header">Room Voting Options</h1>

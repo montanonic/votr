@@ -9,7 +9,6 @@
 }
 
 ul.room-index {
-
   li {
     display: grid;
     grid-template-columns: 3fr 1fr;
@@ -103,4 +102,55 @@ ul.room-index {
       font-size: 1.7rem;
     }
   }
+}
+
+.vote-live-view .vote-casting-component {
+  ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  #group-areas {
+    .area {
+      background-color: lightblue;
+      padding: 1rem 1rem;
+      margin: 1rem 0;
+    }
+
+    .rank-text {
+      font-weight: bold;
+      text-align: center;
+      margin-right: 1rem;
+    }
+
+    .group li {
+      list-style: none;
+    }
+  }
+
+  #vote-options-list {
+    padding: 2rem;
+    justify-content: center;
+    background-color: aqua;
+    position: sticky;
+    bottom: 0;
+  }
+
+  .vote-option {
+    margin: 1rem 0.5rem;
+
+    .name {
+      cursor: pointer;
+      font-size: 1.8rem;
+      font-weight: 500;
+      padding: 1rem 2rem;
+      background-color: gainsboro;
+    }
+  }
+}
+
+.sortable-ghost {
+  opacity: 0.5;
 }

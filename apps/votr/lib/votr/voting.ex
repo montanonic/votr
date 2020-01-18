@@ -177,6 +177,7 @@ defmodule Votr.Voting do
         {:ok, %{room_id: id}} -> id
         %Room{id: id} -> id
         %{room_id: id} -> id
+        {:error, _} -> nil
       end
 
     broadcast_change!(result, room_id, event)
