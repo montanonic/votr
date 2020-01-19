@@ -2,7 +2,6 @@ defmodule VotrWeb.VoteLive.VoteOptions do
   use VotrWeb, :live_component
   alias Votr.Voting
   alias Votr.Voting.VoteOption
-  alias VotrWeb.VoteLive
 
   def render(assigns) do
     VotrWeb.VoteView.render("vote_options.html", assigns)

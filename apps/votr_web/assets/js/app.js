@@ -32,19 +32,28 @@ import { Socket } from "phoenix"
 import socket from "./socket"
 import { Hooks } from "./hooks"
 
+//
 // Initialize LiveSocket on client.
+//
+const csrfToken = document
+  .querySelector("meta[name='csrf-token']")
+  .getAttribute("content")
+
 const liveSocket = new LiveSocket("/live", Socket, {
   hooks: Hooks,
   logger: (kind, msg, data) => {
-    console.log(`${kind}: ${msg}`, data)
-  }
+    console.log(`LiveSocket ${kind}: ${msg}`, data)
+  },
+  params: { _csrf_token: csrfToken }
 })
 window.liveSocket = liveSocket
 liveSocket.connect()
 
+//
 // Initialize UserSocket on client.
+//
 socket.connect()
-let channel = socket.channel("user", {})
+const channel = socket.channel("user", {})
 channel
   .join()
   .receive("ok", resp => {

@@ -1,11 +1,13 @@
 defmodule VotrWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :votr_web
 
+  @session_options [store: :cookie, key: "_votr_web_key", signing_salt: "FajH3QrV"]
+
   socket "/socket", VotrWeb.UserSocket,
     websocket: true,
     longpoll: false
 
-  socket "/live", Phoenix.LiveView.Socket
+  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -39,20 +41,7 @@ defmodule VotrWeb.Endpoint do
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
-  plug Plug.Session,
-    store: :cookie,
-    key: "_votr_web_key",
-    signing_salt: "FajH3QrV"
-
-  # plug :check_shit
-
-  # def check_shit(conn, _opts \\ []) do
-  #   IO.puts "YOU GOT TRIGGERED"
-  #   conn = fetch_session(conn)
-  #   conn = put_session(conn, :foolish, "man")
-  #   IO.inspect get_session(conn), label: "GET SESSION"
-  #   conn
-  # end
+  plug Plug.Session, @session_options
 
   plug VotrWeb.Router
 end
