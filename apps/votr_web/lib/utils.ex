@@ -4,8 +4,10 @@ defmodule VotrWeb.Utils do
   end
 
   defmacro expand_all(ast) do
-    quote do: Macro.prewalk(unquote(ast), &Macro.expand(&1, __ENV__))
+    quote do: unquote(__MODULE__).expand_all(unquote(ast), __ENV__)
   end
+
+  def expand_all(ast, env), do: Macro.prewalk(ast, &Macro.expand(&1, env))
 
   @doc """
   Pattern-matches maps without requiring that you bind the keys to a variable
@@ -47,6 +49,21 @@ defmodule VotrWeb.Utils do
   """
   defmacro m({:%{}, ctx, args}) do
     {:%{}, ctx, Enum.map(args, &pattern/1)}
+  end
+
+  # Handle structs too.
+  defmacro m({:%, ctx, args}) do
+    [struct_module, {:%{}, _, _} = map] = expand_all(args, __CALLER__)
+
+    quote do
+      # Evaluate map portion as normal (by calling `m` on it).
+      map = unquote(__MODULE__).m(unquote(map))
+      # Create the AST for the struct; the newly evaluated map has to be escaped
+      # back into AST.
+      struct = {:%, unquote(ctx), [unquote(struct_module), Macro.escape(map)]}
+      # Evaluate the AST into a struct.
+      Code.eval_quoted(struct, binding(), __ENV__) |> elem(0)
+    end
   end
 
   @doc """
