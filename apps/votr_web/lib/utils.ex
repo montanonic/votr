@@ -10,8 +10,12 @@ defmodule VotrWeb.Utils do
   def expand_all(ast, env), do: Macro.prewalk(ast, &Macro.expand(&1, env))
 
   @doc """
-  Pattern-matches maps without requiring that you bind the keys to a variable
-  name. Assumes atom keys. Use `ms` and `mk` for string maps and keyword lists,
+  Pattern-matches maps/structs without requiring that you bind the keys to a
+  variable name.
+
+  So `m(%{x})` becomes `%{x: x}`; `m(%User{name})` becomes `%User{name: name}`.
+
+  Assumes atom keys. Use `ms` and `mk` for string maps and keyword lists,
   respectively.
 
   ## Limitations
@@ -47,23 +51,32 @@ defmodule VotrWeb.Utils do
       iex> z
       99
   """
-  defmacro m({:%{}, ctx, args}) do
-    {:%{}, ctx, Enum.map(args, &pattern/1)}
+  defmacro m({:%{}, _, _} = ast) do
+    handle_m(ast)
   end
 
   # Handle structs too.
   defmacro m({:%, ctx, args}) do
-    [struct_module, {:%{}, _, _} = map] = expand_all(args, __CALLER__)
+    # `%` takes two arguments. Assuming `User` is a struct, a cal would look
+    # like: `%User{}`. You'll notice that writing `%User {}` and `% User {}`
+    # also works; as a point of interest, if `%` was a normal macro, you'd have
+    # to write `% User, {}`, but this shows that it's not. In any case, `%`
+    # receives two arguments, the module for the struct, and the initial struct
+    # mapping (or blank map). This destructuring below extracts those values
+    # out. The AST of a `%` call interprets `{}` as `%{}`, which we pattern
+    # match on here.
+    [struct_module, {:%{}, _, _} = map_ast] = args
 
-    quote do
-      # Evaluate map portion as normal (by calling `m` on it).
-      map = unquote(__MODULE__).m(unquote(map))
-      # Create the AST for the struct; the newly evaluated map has to be escaped
-      # back into AST.
-      struct = {:%, unquote(ctx), [unquote(struct_module), Macro.escape(map)]}
-      # Evaluate the AST into a struct.
-      Code.eval_quoted(struct, binding(), __ENV__) |> elem(0)
-    end
+    # Handle the map portion the same as `m` does, passing everything else
+    # through unmodfied.
+    {:%, ctx, [struct_module, handle_m(map_ast)]}
+  end
+
+  # Implements rewriting single map atoms to key-values.
+  #
+  # Example: `%{x}` becomes %{x: x}`.
+  defp handle_m({:%{}, ctx, args}) do
+    {:%{}, ctx, Enum.map(args, &pattern/1)}
   end
 
   @doc """
@@ -83,8 +96,10 @@ defmodule VotrWeb.Utils do
   Like the `m` macro, but yields a keyword map.
   """
   defmacro mk({:%{}, _ctx, args}) do
+    # The AST for keyword maps consists of literal values, so as long as
+    # `pattern` only returns 2-tuples, this simple `for` is sufficient to return
+    # the complete AST.
     for arg <- args do
-      # IO.inspect arg
       pattern(arg)
     end
   end
