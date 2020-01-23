@@ -22,28 +22,32 @@ ul.room-index {
   }
 }
 
+@mixin large-button {
+  &:disabled {
+    background-color: red;
+
+    &:hover {
+      background-color: red;
+    }
+  }
+
+  width: 100%;
+  border: none;
+  font-size: 1.8rem;
+  background-color: lighten(green, 14%);
+
+  &:hover {
+    background-color: lighten(green, 8%);
+  }
+}
+
 .vote-live-view #vote-options-component {
   .start-vote-button {
-    &:disabled {
-      background-color: red;
-
-      &:hover {
-        background-color: red;
-      }
-    }
+    @include large-button(); // Styles for the clarification text.
 
     margin-top: 1rem;
     margin-bottom: 4rem;
-    width: 100%;
-    border: none;
-    font-size: 1.8rem;
-    background-color: lighten(green, 14%);
 
-    &:hover {
-      background-color: lighten(green, 8%);
-    }
-
-    // Styles for the clarification text.
     .clarification {
       text-transform: none;
       font-size: 1.5rem;
@@ -112,6 +116,11 @@ ul.room-index {
     align-items: center;
   }
 
+  .submit-votes-button {
+    // @include large-button();
+    width: 100%;
+  }
+
   #group-areas {
     .area {
       background-color: lightblue;
@@ -132,7 +141,7 @@ ul.room-index {
   }
 
   #vote-options-list {
-    padding: 2rem;    
+    padding: 2rem;
     max-height: 40vh;
     overflow: auto;
     justify-content: center;

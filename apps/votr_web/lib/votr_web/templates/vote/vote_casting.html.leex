@@ -1,7 +1,16 @@
 <div id="vote-casting-component" phx-hook="VoteCasting" phx-target="<%= @room.id %>">
   <button phx-click="cancel_voting" phx-target="#vote-casting-component">Cancel Voting</button>
 
-  <div id="group-areas" phx-update="ignore">
+  <div class="info-text">
+    <p>When you're ready to submit your votes, click the button below to
+      validate them. You'll then see a preview of what your final vote
+      submission will look like, and can confirm your submission or make further
+      changes.</p>
+  </div>
+
+  <button id="submit-votes" class="submit-votes-button">Submit Votes</button>
+
+  <div id="group-areas">
     <%= for {rank, vote_options} when rank != :menu <- @options_by_rank do %>
       <ul id="<%= "group-#{rank}" %>" class="area" data-id="<%= rank %>">
         <span class="rank-text"><%= "##{rank}" %></span>
@@ -12,9 +21,10 @@
     <% end %>
   </div>
 
-  <ul id="vote-options-list" data-id="menu" phx-update="ignore">
+  <ul id="vote-options-list" data-id="menu">
     <%= for vote_option <- @options_by_rank.menu do %>
       <%= render "vote_casting_option.html", vote_option: vote_option %>
     <% end %>
   </ul>
+
 </div>
