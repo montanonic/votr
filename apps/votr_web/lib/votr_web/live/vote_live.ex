@@ -3,50 +3,38 @@ defmodule VotrWeb.VoteLive do
   alias Votr.Voting
   alias Votr.Voting.{VoteOption, Room}
 
-  @doc false
   @impl true
   def render(assigns) do
     VotrWeb.VoteView.render("main.html", assigns)
   end
 
-  @doc false
-  @impl true
-  def mount(_session, socket) do
-    {:ok, assign(socket, [])}
-  end
-
-  @doc false
   @impl true
   def handle_params(%{"id" => id}, _uri, socket) do
-    room = Voting.get_room!(id, preload: [:vote_options])
-    socket = assign(socket, room: room)
+    room = Voting.get_room!(id)
+    vote_options = Voting.list_vote_options(room)
+
+    socket = assign(socket, mk(%{room, vote_options}))
 
     if connected?(socket) do
-      room_id = socket.assigns.room.id
       # In case of param change, we only want to be subscribed to a single room.
-      :ok = Voting.unsubscribe(room_id)
-      :ok = Voting.subscribe(room_id)
+      :ok = Voting.unsubscribe(room.id)
+      :ok = Voting.subscribe(room.id)
     end
 
     {:noreply, socket}
   end
 
-  @doc false
   @impl true
   def handle_info({Voting, {VoteOption, :added}, vote_option}, socket) do
-    room = Map.update!(socket.assigns.room, :vote_options, &[vote_option | &1])
-    {:noreply, assign(socket, room: room)}
+    {:noreply, assign(socket, vote_options: [vote_option | socket.assigns.vote_options])}
   end
 
   def handle_info({Voting, {VoteOption, :deleted}, vote_option}, socket) do
-    room =
-      Map.update!(
-        socket.assigns.room,
-        :vote_options,
-        &Enum.reject(&1, fn vo -> vo.id == vote_option.id end)
-      )
-
-    {:noreply, assign(socket, room: room)}
+    {:noreply,
+     assign(socket,
+       vote_options:
+         Enum.reject(socket.assigns.vote_options, fn vo -> vo.id == vote_option.id end)
+     )}
   end
 
   def handle_info({Voting, {Room, :status_changed}, room}, socket) do

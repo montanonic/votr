@@ -2,9 +2,9 @@
   <%= cond do %>
     <% Room.get_status("voting_options") == @room.status -> %>
       <h1 class="header">Room Voting Options</h1>
-      <%= live_component @socket, VoteLive.VoteOptions, id: @room.id, room: @room %>
+      <%= live_component @socket, VoteLive.VoteOptions, id: @room.id, room: @room, vote_options: @vote_options %>
     <% Room.get_status("voting") == @room.status -> %>
       <h1 class="header">Cast Your Votes!</h1>
-      <%= live_component @socket, VoteLive.VoteCasting, id: @room.id, room: @room %>
+      <%= live_component @socket, VoteLive.VoteCasting, id: @room.id, room: @room, vote_options: @vote_options %>
   <% end %>
 </div>

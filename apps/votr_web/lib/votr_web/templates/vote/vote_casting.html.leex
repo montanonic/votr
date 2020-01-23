@@ -1,26 +1,20 @@
-<div class="vote-casting-component" phx-hook="VoteCasting" phx-target="<%= @room.id %>">
-  <button phx-click="cancel_voting" phx-target=".vote-casting-component">Cancel Voting</button>
+<div id="vote-casting-component" phx-hook="VoteCasting" phx-target="<%= @room.id %>">
+  <button phx-click="cancel_voting" phx-target="#vote-casting-component">Cancel Voting</button>
 
-  <div id="group-areas">
-    <%= for {vote_option, i} <- Enum.with_index(@room.vote_options, 1) do %>
-      <ul id="<%= "group-#{i}" %>" class="area" data-id="<%= i %>">
-        <span class="rank-text"><%= "##{i}" %></span>
+  <div id="group-areas" phx-update="ignore">
+    <%= for {rank, vote_options} when rank != :menu <- @options_by_rank do %>
+      <ul id="<%= "group-#{rank}" %>" class="area" data-id="<%= rank %>">
+        <span class="rank-text"><%= "##{rank}" %></span>
+        <%= for vote_option <- vote_options do %>
+          <%= render "vote_casting_option.html", vote_option: vote_option %>
+        <% end %>
       </ul>
     <% end %>
   </div>
 
-  <ul id="vote-options-list" data-id="menu">
-    <%= for vote_option <- sort_votes_by_rank(@room.vote_options) do %>
-      <li class="vote-option" data-name="<%= vote_option.name %>">
-        <span class="name"><%= vote_option.name %></span>
-        <!--<button phx-click="up" phx-value-id="<%=vote_option.id %>"
-          class="button-outline" style="font-size: 2rem;">▲</button>
-        <button phx-click="down" phx-value-id="<%=vote_option.id %>"
-          class="button-outline" style="font-size: 2rem;">▼</button>
-        <div>
-          <%= vote_option.rank %>
-        </div>-->
-      </li>
+  <ul id="vote-options-list" data-id="menu" phx-update="ignore">
+    <%= for vote_option <- @options_by_rank.menu do %>
+      <%= render "vote_casting_option.html", vote_option: vote_option %>
     <% end %>
   </ul>
 </div>

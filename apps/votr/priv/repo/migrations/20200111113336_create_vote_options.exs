@@ -10,7 +10,7 @@ defmodule Votr.Repo.Migrations.CreateVoteOptions do
       timestamps()
     end
 
-    create unique_index(:vote_options, [:room_id, :name])
     create index(:vote_options, [:room_id])
+    create unique_index(:vote_options, [:room_id, :name])
   end
 end

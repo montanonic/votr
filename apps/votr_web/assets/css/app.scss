@@ -22,7 +22,7 @@ ul.room-index {
   }
 }
 
-.vote-live-view .vote-options-component {
+.vote-live-view #vote-options-component {
   .start-vote-button {
     &:disabled {
       background-color: red;
@@ -104,7 +104,7 @@ ul.room-index {
   }
 }
 
-.vote-live-view .vote-casting-component {
+.vote-live-view #vote-casting-component {
   ul {
     list-style: none;
     display: flex;
@@ -132,7 +132,9 @@ ul.room-index {
   }
 
   #vote-options-list {
-    padding: 2rem;
+    padding: 2rem;    
+    max-height: 40vh;
+    overflow: auto;
     justify-content: center;
     background-color: aqua;
     position: sticky;

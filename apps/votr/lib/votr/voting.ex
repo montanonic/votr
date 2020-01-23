@@ -83,9 +83,13 @@ defmodule Votr.Voting do
 
   @doc """
   Sets a room's status, changing how it behaves.
+
+  Expects either the room struct or id.
   """
-  def set_room_status(room, status) do
-    room
+  def set_room_status(%Room{id: room_id}, status), do: set_room_status(room_id, status)
+
+  def set_room_status(room_id, status) do
+    %Room{id: room_id}
     |> change(%{status: Room.get_status(status)})
     |> Repo.update!()
     |> broadcast_change!({Room, :status_changed})
@@ -205,7 +209,15 @@ defmodule Votr.Voting do
 
   # Broadcasts an event message to anyone subscribing to the current room.
   defp broadcast_to_room!(result, room_id, event) do
-    Phoenix.PubSub.broadcast!(VotrWeb.PubSub, pubsub_topic(room_id), {__MODULE__, event, result})
+    # Broadcast the result unless we're seeding the database, in which case we
+    # don't want any PubSub behavior.
+    unless Application.get_env(:votr, :seeding, false) do
+      Phoenix.PubSub.broadcast!(
+        VotrWeb.PubSub,
+        pubsub_topic(room_id),
+        {__MODULE__, event, result}
+      )
+    end
   end
 
   defp pubsub_topic(room_id), do: "#{inspect(__MODULE__)}:#{room_id}"

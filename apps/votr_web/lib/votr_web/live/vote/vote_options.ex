@@ -52,11 +52,5 @@ defmodule VotrWeb.VoteLive.VoteOptions do
     {:noreply, socket}
   end
 
-  def handle_event(msg, params, socket) do
-    IO.inspect(msg, label: "MESSAGE")
-    IO.inspect(params, label: "PARAMS")
-    {:noreply, socket}
-  end
-
   defp initial_changeset, do: Voting.vote_option_changeset(%VoteOption{}, %{})
 end

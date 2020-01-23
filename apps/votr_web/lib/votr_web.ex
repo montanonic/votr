@@ -89,6 +89,13 @@ defmodule VotrWeb do
   When used, dispatch to the appropriate controller/view/etc.
   """
   defmacro __using__(which) when is_atom(which) do
-    apply(__MODULE__, which, [])
+    specific_using_clause = apply(__MODULE__, which, [])
+
+    quote do
+      unquote(specific_using_clause)
+      # Import common utilities for all modules.
+      alias VotrWeb.Utils
+      import VotrWeb.Utils, only: [m: 1, ms: 1, mk: 1]
+    end
   end
 end

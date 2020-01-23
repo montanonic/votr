@@ -3,8 +3,8 @@ defmodule Votr.Repo.Migrations.CreateRooms do
 
   def change do
     create table(:rooms) do
-      add :name, :string
-      add :status, :string
+      add :name, :string, null: false
+      add :status, :string, null: false
 
       timestamps()
     end
