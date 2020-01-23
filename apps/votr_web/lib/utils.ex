@@ -11,12 +11,17 @@ defmodule VotrWeb.Utils do
 
   @doc """
   Pattern-matches maps/structs without requiring that you bind the keys to a
-  variable name.
+  variable name, converting un-keyed variables into atom keys like so:
 
   So `m(%{x})` becomes `%{x: x}`; `m(%User{name})` becomes `%User{name: name}`.
 
-  Assumes atom keys. Use `ms` and `mk` for string maps and keyword lists,
-  respectively.
+  If you want un-keyed variables to be converted into string keys, use `ms`.
+  Finally, use `mk` if you want your output to be a keyword list, but it
+  otherwise functions indentically to this macro.
+
+  Note that you can still use `"blah" => "rah"` syntax to write arbitrary keys:
+
+      m(%{"yes" => x, x}) # Becomes `%{"yes" => x, x: x}`
 
   ## Limitations
 
@@ -51,12 +56,19 @@ defmodule VotrWeb.Utils do
       iex> z
       99
   """
-  defmacro m({:%{}, _, _} = ast) do
-    handle_m(ast)
+  defmacro m({:%{}, _, _} = ast), do: handle_m(ast)
+
+  defmacro m({:%, _, _} = ast), do: handle_m(ast)
+
+  # Implements rewriting single map atoms to key-values.
+  #
+  # Example: `%{x}` becomes %{x: x}`.
+  defp handle_m({:%{}, ctx, args}) do
+    {:%{}, ctx, Enum.map(args, &pattern/1)}
   end
 
   # Handle structs too.
-  defmacro m({:%, ctx, args}) do
+  defp handle_m({:%, ctx, args}) do
     # `%` takes two arguments. Assuming `User` is a struct, a cal would look
     # like: `%User{}`. You'll notice that writing `%User {}` and `% User {}`
     # also works; as a point of interest, if `%` was a normal macro, you'd have
@@ -67,16 +79,9 @@ defmodule VotrWeb.Utils do
     # match on here.
     [struct_module, {:%{}, _, _} = map_ast] = args
 
-    # Handle the map portion the same as `m` does, passing everything else
-    # through unmodfied.
+    # Handle the map portion the same as `m({:%{}, ... })` does, passing
+    # everything else through unmodfied.
     {:%, ctx, [struct_module, handle_m(map_ast)]}
-  end
-
-  # Implements rewriting single map atoms to key-values.
-  #
-  # Example: `%{x}` becomes %{x: x}`.
-  defp handle_m({:%{}, ctx, args}) do
-    {:%{}, ctx, Enum.map(args, &pattern/1)}
   end
 
   @doc """
