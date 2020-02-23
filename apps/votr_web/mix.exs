@@ -48,6 +48,7 @@ defmodule VotrWeb.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:phoenix_live_view, "~> 0.5"},
       {:floki, ">= 0.0.0", only: :test},
+      {:credo, "~> 1.1.0", only: [:dev, :test], runtime: false},
       {:cortex, "~> 0.1", only: [:dev, :test]}
     ]
   end

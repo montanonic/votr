@@ -97,12 +97,17 @@ defmodule VotrWeb.VoteLive.VoteCasting do
   defp get_update_ranked_fn(:ranked, option_id), do: &MapSet.put(&1, option_id)
   defp get_update_ranked_fn(:unranked, option_id), do: &MapSet.delete(&1, option_id)
 
-  defp parse_rank("menu"), do: :menu
-  defp parse_rank(str), do: String.to_integer(str)
+  # defp parse_rank("menu"), do: :menu
+  # defp parse_rank(str), do: String.to_integer(str)
 
   defmodule VoteOptionRanking do
     @moduledoc """
     Holds UI-relevant data for VoteOptions.
+
+    Ultimately, the majority of this module's concerns are managing state for
+    lists of items where items cannot be duplicated and their index within a
+    list must be preserved. This sounds like a more generic operation and module
+    than what exists here.
 
     The following fields are internal use only, but are described here to
     facilitate development of this module.
@@ -134,9 +139,58 @@ defmodule VotrWeb.VoteLive.VoteCasting do
       m(%__MODULE__{vote_option_by_id, id_to_location, id_to_index})
     end
 
-    def num_options(%__MODULE__{} = self) do
-      m(%{vote_options_by_id}) = self
-      map_size(vote_options_by_id)
+    def move(%__MODULE__{} = state, option_id, to_location, at_index) when is_integer(option_id) do
+      with(
+        :ok <- validate_location(state, to_location),
+        state <-
+          state
+          |> Map.update!(:id_to_location, &Map.put(&1, option_id, to_location))
+          |> Map.update!(:id_to_index, &Map.put(&1, option_id, at_index)),
+        state <-
+          Enum.group_by(
+            state.id_to_location,
+            fn {_id, location} -> %{location: location} end,
+            fn {id, _} -> %{index: state.id_to_index[id], id: id} end
+          )
+      ) do
+        state
+      end
     end
+
+    @doc """
+    Ways to do index uniqueness.
+
+    For each option id, store its index. That means we could have
+
+    %{0 => 0, 1 => 0, 2 => 0}
+
+    if each option was in a different location. This forces us to do validation
+    on the actual index values, but does ensure that options are only used once.
+
+    A different solution would leverage lists which implicitly capture ordering
+    without the need to use direct arithmetic. This would make it easier to
+    shift values as well, rather than looping and incrementing indexes. However,
+    a con would be that we'd again need to enforce uniqueness / lack of
+    duplication.
+    """
+
+    def num_options(%__MODULE__{} = state) do
+      m(%{vote_option_by_id}) = state
+      map_size(vote_option_by_id)
+    end
+
+    defp validate_location(%__MODULE__{} = state, location) do
+      is_menu? = location == :menu
+      is_in_range? = location in 1..num_options(state)
+
+      if is_menu? || is_in_range? do
+        :ok
+      else
+        {:error, "invalid location"}
+      end
+    end
+
+    # defp validate_index(%__MODULE__{} = state, location, index) do
+    # end
   end
 end

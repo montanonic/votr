@@ -41,6 +41,7 @@ defmodule Votr.MixProject do
       {:jason, "~> 1.0"},
       {:ets, "~> 0.8.0"},
       {:ex2ms, "~> 1.6.0"},
+      {:stream_data, "~> 0.1"},
       {:cortex, "~> 0.1", only: [:dev, :test]}
     ]
   end

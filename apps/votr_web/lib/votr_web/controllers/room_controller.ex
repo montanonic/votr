@@ -14,7 +14,6 @@
 #     live_render(conn, VotrWeb.RoomLive.New, router: VotrWeb.Router)
 #   end
 
-
 #   def logout(conn, _params) do
 #     live_render(conn, VotrWeb.RoomLive.New, router: VotrWeb.Router)
 #   end
